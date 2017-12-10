@@ -16,8 +16,8 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
             List<PagesVM> pageList;
             using (Db db = new Db())
             {
-                pageList = db.Pages.ToArray().OrderBy(x => x.Sorting).Select(x => new PagesVM(x)).ToList();
-                // pageList = db.Pages.ToList().Select(x => new PagesVM(x)).ToList();
+                //pageList = db.Pages.ToArray().OrderBy(x => x.Sorting).Select(x => new PagesVM(x)).ToList();
+                pageList = db.Pages.ToList().Select(x => new PagesVM(x)).ToList();
             }
             return View(pageList);
         }
@@ -72,7 +72,7 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
                 PageDTO dto = db.Pages.Find(id);
                 if (dto == null)
                 {
-                   return Content("This Page does not exist");
+                    return Content("This Page does not exist");
                 }
                 model = new PagesVM(dto);
             }
@@ -86,7 +86,7 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
                 return View(model);
             }
             int id = model.ID;
-            string slug=string.Empty;
+            string slug = string.Empty;
 
             using (Db db = new Db())
             {
@@ -104,7 +104,7 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
                     }
                 }
                 //make suere  Title and slug should be unique
-                if (db.Pages.Where(x => x.ID != id).Any(x => x.Title == model.Title)||
+                if (db.Pages.Where(x => x.ID != id).Any(x => x.Title == model.Title) ||
                     db.Pages.Where(x => x.ID != id).Any(x => x.Slug == slug))
                 {
                     ModelState.AddModelError("", "The Title or Slug already Exists");
@@ -116,7 +116,7 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
                 db.SaveChanges();
                 TempData["SM"] = " You Have Edited the Page";
             }
-                return RedirectToAction("EditPage");
+            return RedirectToAction("EditPage");
         }
 
         [HttpGet]
@@ -128,7 +128,7 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
                 PageDTO dto = db.Pages.Find(id);
                 if (dto == null)
                 {
-                   return Content("This Page does not exist");
+                    return Content("This Page does not exist");
                 }
                 model = new PagesVM(dto);
             }
@@ -136,7 +136,7 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
         }
         public ActionResult DeletePage(int id)
         {
-            
+
             using (Db db = new Db())
             {
                 PageDTO dto = db.Pages.Find(id);
@@ -165,7 +165,36 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
                     count++;
                 }
             }
-        }   
+        }
 
+        [HttpGet]
+        public ActionResult EditSidebar()
+        {
+            SidebarVM model;
+            using (Db db = new Db())
+            {
+                SidebarDTO dto = db.Sidebar.Find(1);
+                model = new SidebarVM(dto);
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult EditSidebar(SidebarVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            using (Db db = new Db())
+            {
+                SidebarDTO dto = db.Sidebar.Find(1);
+                dto.Body = model.Body;
+
+                db.SaveChanges();
+
+            }
+            TempData["SM"] = "you have Edited the sidebar";
+            return RedirectToAction("EditSidebar");
+        }
     }
 }
