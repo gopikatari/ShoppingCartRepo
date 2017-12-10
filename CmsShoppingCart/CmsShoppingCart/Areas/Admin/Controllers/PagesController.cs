@@ -72,7 +72,7 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
                 PageDTO dto = db.Pages.Find(id);
                 if (dto == null)
                 {
-                    Content("This Page does not exist");
+                   return Content("This Page does not exist");
                 }
                 model = new PagesVM(dto);
             }
@@ -116,8 +116,56 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
                 db.SaveChanges();
                 TempData["SM"] = " You Have Edited the Page";
             }
-                return RedirectToAction("Index");
+                return RedirectToAction("EditPage");
         }
+
+        [HttpGet]
+        public ActionResult PageDetails(int id)
+        {
+            PagesVM model;
+            using (Db db = new Db())
+            {
+                PageDTO dto = db.Pages.Find(id);
+                if (dto == null)
+                {
+                   return Content("This Page does not exist");
+                }
+                model = new PagesVM(dto);
+            }
+            return View(model);
+        }
+        public ActionResult DeletePage(int id)
+        {
+            
+            using (Db db = new Db())
+            {
+                PageDTO dto = db.Pages.Find(id);
+                if (dto == null)
+                {
+                    return Content("This Page does not exist");
+                }
+                db.Pages.Remove(dto);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public void Reorderpages(int[] Id)
+        {
+            int count = 1;
+            PageDTO dto;
+            using (Db db = new Db())
+            {
+                foreach (var pageId in Id)
+                {
+                    dto = db.Pages.Find(pageId);
+                    dto.Sorting = count;
+                    db.SaveChanges();
+                    count++;
+                }
+            }
+        }   
 
     }
 }
