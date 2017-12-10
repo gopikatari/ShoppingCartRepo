@@ -1,9 +1,5 @@
 ﻿using CmsShoppingCart.Models.Data;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+using System.Web.Mvc;
 
 namespace CmsShoppingCart.Models.ViewModel
 {
@@ -11,7 +7,7 @@ namespace CmsShoppingCart.Models.ViewModel
     {
         public SidebarVM()
         {
-                
+
         }
         public SidebarVM(SidebarDTO row)
         {
@@ -19,7 +15,7 @@ namespace CmsShoppingCart.Models.ViewModel
             Body = row.Body;
         }
         public int Id { get; set; }
-        [Required]
+        [AllowHtml]
         public string Body { get; set; }
     }
 }
